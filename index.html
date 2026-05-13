@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charlie Touchard — Ingénieur Management &amp; Industrie 4.0</title>
+  <meta name="description" content="Ingénieur ICAM spécialisé Industrie 4.0. Lean, automatisation IA, Python et gestion de projet pour PME. Basé en Bretagne." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Stripe.js — activé dès que vous avez vos Payment Links -->
+  <script src="https://js.stripe.com/v3/" defer></script>
+
+  <style>
+    /* ══════════════════════════════════════════
+       Variables
+    ══════════════════════════════════════════ */
+    :root {
+      --bg:        #0a0a0a;
+      --bg2:       #111111;
+      --card:      #161616;
+      --text:      #f5f5f0;
+      --muted:     #888888;
+      --accent:    #00d4ff;
+      --glow:      rgba(0,212,255,.14);
+      --border:    rgba(255,255,255,.07);
+      --r:         12px;
+      --ft:        'Playfair Display', serif;
+      --fb:        'Inter', sans-serif;
+      --ease:      .3s ease;
+      --nav:       72px;
+    }
+
+    /* ══════════════════════════════════════════
+       Reset & base
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--fb); line-height: 1.7;
+      overflow-x: hidden; cursor: none;
+    }
+    a  { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { font-family: var(--fb); cursor: none; border: none; background: none; }
+    img { display: block; max-width: 100%; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
+
+    /* ══════════════════════════════════════════
+       Curseur personnalisé
+    ══════════════════════════════════════════ */
+    #cd { /* dot */
+      width: 8px; height: 8px; background: var(--accent);
+      border-radius: 50%; position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      mix-blend-mode: screen;
+      transition: opacity .3s, transform .12s;
+    }
+    #cr { /* ring */
+      width: 38px; height: 38px;
+      border: 1.5px solid rgba(0,212,255,.4);
+      border-radius: 50%; position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .3s, height .3s, opacity .3s;
+    }
+    @media (hover: none) { #cd, #cr { display: none; } body, button { cursor: auto; } }
+
+    /* ══════════════════════════════════════════
+       Navigation
+    ══════════════════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav); z-index: 1000;
+      display: flex; align-items: center;
+      padding: 0 5%; justify-content: space-between;
+      transition: background var(--ease), backdrop-filter var(--ease), border-bottom var(--ease);
+    }
+    nav.on {
+      background: rgba(10,10,10,.9);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: var(--ft); font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; }
+    .logo span { color: var(--accent); }
+    .nav-l { display: flex; gap: 2.5rem; align-items: center; }
+    .nav-l a {
+      font-size: .82rem; font-weight: 500; color: var(--muted);
+      letter-spacing: .04em; text-transform: uppercase;
+      transition: color var(--ease);
+    }
+    .nav-l a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent) !important; color: #000 !important;
+      padding: .48rem 1.25rem; border-radius: 99px;
+      font-weight: 600 !important;
+      transition: transform var(--ease), box-shadow var(--ease) !important;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 0 22px var(--glow); }
+    .ham { display: none; flex-direction: column; gap: 5px; padding: 4px; }
+    .ham span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 99px; transition: var(--ease); }
+    .mob {
+      display: none; position: fixed;
+      top: var(--nav); left: 0; right: 0;
+      background: rgba(10,10,10,.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 5%; flex-direction: column; gap: 1.4rem; z-index: 999;
+    }
+    .mob.open { display: flex; }
+    .mob a { font-size: 1.05rem; color: var(--muted); transition: color var(--ease); }
+    .mob a:hover { color: var(--accent); }
+
+    /* ══════════════════════════════════════════
+       Utilitaires partagés
+    ══════════════════════════════════════════ */
+    section { padding: 6rem 5%; }
+    .wrap  { max-width: 1200px; margin: 0 auto; }
+    .lbl   { font-size: .72rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: .85rem; }
+    .h2    { font-family: var(--ft); font-size: clamp(2rem,5vw,3.1rem); font-weight: 700; line-height: 1.15; margin-bottom: 1.2rem; }
+    .sub   { color: var(--muted); font-size: 1rem; max-width: 580px; }
+    .shd   { margin-bottom: 3.8rem; }
+    .tag   {
+      font-size: .68rem; font-weight: 500;
+      background: rgba(0,212,255,.08); border: 1px solid rgba(0,212,255,.2);
+      color: var(--accent); padding: .17rem .55rem; border-radius: 99px;
+    }
+
+    /* Reveal */
+    .rv {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .rv.in { opacity: 1; transform: none; }
+    .d1{transition-delay:.1s} .d2{transition-delay:.2s}
+    .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+
+    /* Boutons */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .82rem 1.9rem; border-radius: 99px;
+      font-size: .88rem; font-weight: 600; cursor: none;
+      transition: transform var(--ease), box-shadow var(--ease),
+                  background var(--ease), border-color var(--ease), color var(--ease);
+    }
+    .btn-p { background: var(--accent); color: #000; }
+    .btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,.28); }
+    .btn-o { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-o:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ══════════════════════════════════════════
+       Hero
+    ══════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: var(--nav); position: relative; overflow: hidden;
+    }
+    .h-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 65% 40%, rgba(0,212,255,.065) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 8% 80%,  rgba(0,212,255,.04)  0%, transparent 60%);
+    }
+    .h-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+    }
+    .h-wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .h-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(0,212,255,.08); border: 1px solid rgba(0,212,255,.2);
+      border-radius: 99px; padding: .38rem .95rem;
+      font-size: .76rem; font-weight: 500; color: var(--accent);
+      margin-bottom: 1.8rem; letter-spacing: .05em;
+    }
+    .h-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+    /* ↓ REPLACE "Charlie Touchard" if needed */
+    .h-name {
+      font-family: var(--ft);
+      font-size: clamp(3rem,8.5vw,6.8rem);
+      font-weight: 700; line-height: 1.0; letter-spacing: -.03em; margin-bottom: .4rem;
+    }
+    .h-name .acc { color: var(--accent); }
+    .h-job  { font-size: clamp(.9rem,2vw,1.2rem); color: var(--muted); margin-bottom: 1.4rem; letter-spacing: .03em; }
+    .h-line {
+      font-size: clamp(1rem,2vw,1.25rem); color: var(--text);
+      max-width: 520px; margin-bottom: 2.4rem; line-height: 1.6;
+    }
+    .h-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .h-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      color: var(--muted); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+      animation: bob 2.2s ease-in-out infinite;
+    }
+    @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(7px)} }
+
+    /* ══════════════════════════════════════════
+       À propos
+    ══════════════════════════════════════════ */
+    #apropos { background: var(--bg2); }
+    .ap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .ap-photo { display: flex; justify-content: center; }
+    .av-wrap  { position: relative; width: 280px; height: 280px; }
+    .av-img   {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 50px rgba(0,212,255,.12), inset 0 0 30px rgba(0,212,255,.03);
+    }
+    .av-ring {
+      position: absolute; inset: -12px; border-radius: 50%;
+      border: 1px solid rgba(0,212,255,.18);
+      animation: spin 22s linear infinite;
+    }
+    .av-ring::after {
+      content: ''; position: absolute; top: -3px; left: 50%;
+      width: 6px; height: 6px; background: var(--accent);
+      border-radius: 50%; transform: translateX(-50%);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ap-txt p { color: var(--muted); margin-bottom: 1.3rem; font-size: 1rem; }
+    .ap-txt strong { color: var(--text); }
+    .stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin-top: 2.4rem; }
+    .sc {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.2rem;
+      transition: border-color var(--ease), transform var(--ease);
+    }
+    .sc:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .sc-n { font-family: var(--ft); font-size: 2.1rem; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: .2rem; }
+    .sc-l { font-size: .76rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* ══════════════════════════════════════════
+       Compétences
+    ══════════════════════════════════════════ */
+    .sk-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(235px,1fr)); gap: 1.3rem; }
+    .sk-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.8rem 1.4rem;
+      position: relative; overflow: hidden;
+      transition: border-color var(--ease), transform var(--ease), box-shadow var(--ease);
+    }
+    .sk-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity var(--ease);
+    }
+    .sk-card:hover { border-color: rgba(0,212,255,.3); transform: translateY(-4px); box-shadow: 0 12px 38px rgba(0,212,255,.07); }
+    .sk-card:hover::before { opacity: 1; }
+    .sk-ico {
+      width: 46px; height: 46px; border-radius: 11px;
+      background: var(--glow); border: 1px solid rgba(0,212,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1.1rem;
+    }
+    .sk-name { font-weight: 600; font-size: .98rem; margin-bottom: .4rem; }
+    .sk-desc { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════
+       Services
+    ══════════════════════════════════════════ */
+    #services { background: var(--bg2); }
+    .sv-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(295px,1fr)); gap: 1.3rem; }
+    .sv-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2.3rem 1.9rem;
+      display: flex; flex-direction: column; gap: .8rem;
+      position: relative; overflow: hidden;
+      transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
+    }
+    .sv-card.hot { border-color: rgba(0,212,255,.4); box-shadow: 0 0 40px rgba(0,212,255,.07); }
+    .sv-card.hot::after {
+      content: 'Populaire'; position: absolute; top: 1.2rem; right: 1.2rem;
+      background: var(--accent); color: #000; font-size: .67rem; font-weight: 700;
+      padding: .18rem .62rem; border-radius: 99px; letter-spacing: .05em; text-transform: uppercase;
+    }
+    .sv-card:hover { transform: translateY(-4px); box-shadow: 0 16px 50px rgba(0,212,255,.09); }
+    .sv-ico   { font-size: 1.8rem; }
+    .sv-title { font-family: var(--ft); font-size: 1.3rem; font-weight: 600; }
+    .sv-desc  { color: var(--muted); font-size: .87rem; flex: 1; }
+    .sv-feat  { display: flex; flex-direction: column; gap: .35rem; }
+    .sv-feat li { font-size: .82rem; color: var(--muted); display: flex; gap: .42rem; }
+    .sv-feat li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+    .sv-price { font-family: var(--ft); font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .sv-price span { font-size: .9rem; color: var(--muted); font-family: var(--fb); font-weight: 400; }
+    .sv-card .btn { width: 100%; justify-content: center; margin-top: .3rem; }
+
+    /* ══════════════════════════════════════════
+       Expériences (timeline)
+    ══════════════════════════════════════════ */
+    .tl { position: relative; max-width: 740px; margin: 0 auto; padding-left: 2rem; }
+    .tl::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .tl-i { position: relative; padding-bottom: 2.8rem; padding-left: 2.4rem; }
+    .tl-i:last-child { padding-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -6px; top: 5px;
+      width: 12px; height: 12px; background: var(--accent);
+      border-radius: 50%; box-shadow: 0 0 12px rgba(0,212,255,.5);
+    }
+    .tl-date { font-size: .74rem; font-weight: 600; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .4rem; }
+    .tl-role { font-family: var(--ft); font-size: 1.12rem; font-weight: 600; margin-bottom: .18rem; }
+    .tl-co   { font-size: .9rem; color: var(--muted); font-weight: 500; margin-bottom: .6rem; }
+    .tl-desc { font-size: .87rem; color: var(--muted); line-height: 1.7; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
+
+    /* ══════════════════════════════════════════
+       Projets
+    ══════════════════════════════════════════ */
+    #projets { background: var(--bg2); }
+    .pj-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(315px,1fr)); gap: 1.3rem; }
+    .pj-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden;
+      transition: transform var(--ease), box-shadow var(--ease);
+    }
+    .pj-card:hover { transform: translateY(-4px); box-shadow: 0 14px 45px rgba(0,0,0,.4); }
+    .pj-thumb {
+      height: 175px; background: linear-gradient(135deg,#111,#1a1a1a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem; border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .pj-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
+      opacity: 0; transition: opacity var(--ease);
+    }
+    .pj-card:hover .pj-thumb::after { opacity: 1; }
+    .pj-body { padding: 1.5rem; }
+    .pj-title { font-family: var(--ft); font-size: 1.1rem; font-weight: 600; margin-bottom: .42rem; }
+    .pj-desc  { font-size: .84rem; color: var(--muted); margin-bottom: .85rem; line-height: 1.65; }
+    .pj-tags  { display: flex; flex-wrap: wrap; gap: .36rem; margin-bottom: 1.1rem; }
+    .pj-card .btn { font-size: .8rem; padding: .55rem 1.3rem; }
+
+    /* ══════════════════════════════════════════
+       Témoignages
+    ══════════════════════════════════════════ */
+    .te-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(295px,1fr)); gap: 1.3rem; }
+    .te-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.9rem;
+      transition: border-color var(--ease);
+    }
+    .te-card:hover { border-color: rgba(0,212,255,.2); }
+    .te-q    { font-size: 2.6rem; color: var(--accent); opacity: .3; font-family: var(--ft); line-height: 1; margin-bottom: .75rem; }
+    .te-txt  { font-size: .9rem; color: var(--muted); line-height: 1.75; font-style: italic; margin-bottom: 1.35rem; }
+    .te-auth { display: flex; align-items: center; gap: .85rem; }
+    .av-small {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(0,212,255,.15), rgba(0,212,255,.05));
+      border: 1px solid rgba(0,212,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .76rem; font-weight: 700; color: var(--accent);
+    }
+    .auth-n { font-weight: 600; font-size: .86rem; }
+    .auth-r { font-size: .75rem; color: var(--muted); }
+
+    /* ══════════════════════════════════════════
+       Contact
+    ══════════════════════════════════════════ */
+    #contact { background: var(--bg2); }
+    .ct-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: start; }
+    .ct-info p { color: var(--muted); margin-bottom: 1.9rem; font-size: .98rem; }
+    .ct-items { display: flex; flex-direction: column; gap: .85rem; margin-bottom: 2.1rem; }
+    .ct-row  { display: flex; align-items: center; gap: .68rem; font-size: .88rem; color: var(--muted); }
+    .ct-ico  {
+      width: 35px; height: 35px; flex-shrink: 0;
+      background: var(--glow); border: 1px solid rgba(0,212,255,.2);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .95rem;
+    }
+    .socials { display: flex; gap: .6rem; }
+    .soc-a {
+      width: 41px; height: 41px; border-radius: 9px;
+      border: 1px solid var(--border); background: var(--card);
+      display: flex; align-items: center; justify-content: center; font-size: .95rem;
+      transition: border-color var(--ease), transform var(--ease), background var(--ease);
+    }
+    .soc-a:hover { border-color: var(--accent); transform: translateY(-2px); background: var(--glow); }
+    .ct-form {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2.4rem;
+    }
+    .fg { display: flex; flex-direction: column; gap: .42rem; margin-bottom: 1.15rem; }
+    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label { font-size: .76rem; font-weight: 500; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+    input, select, textarea {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+      padding: .75rem .95rem; color: var(--text); font-family: var(--fb); font-size: .87rem;
+      outline: none; transition: border-color var(--ease); -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 125px; }
+    select option { background: var(--bg2); }
+    .f-ok { display: none; text-align: center; padding: 2rem; color: var(--accent); font-size: 1rem; }
+
+    /* ══════════════════════════════════════════
+       Footer
+    ══════════════════════════════════════════ */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 2.1rem 5%; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .ft-logo { font-family: var(--ft); font-size: 1.2rem; font-weight: 700; }
+    .ft-logo span { color: var(--accent); }
+    .ft-copy { font-size: .77rem; color: var(--muted); }
+    .ft-links { display: flex; gap: 1.4rem; }
+    .ft-links a { font-size: .77rem; color: var(--muted); transition: color var(--ease); }
+    .ft-links a:hover { color: var(--accent); }
+
+    /* ══════════════════════════════════════════
+       Modal devis
+    ══════════════════════════════════════════ */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+      z-index: 2000; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.4rem;
+      max-width: 510px; width: 100%; position: relative;
+      animation: mIn .3s ease;
+    }
+    @keyframes mIn { from{opacity:0;transform:scale(.95) translateY(10px)} to{opacity:1;transform:none} }
+    .m-x {
+      position: absolute; top: 1.1rem; right: 1.1rem;
+      color: var(--muted); font-size: 1.5rem; cursor: none; transition: color var(--ease);
+    }
+    .m-x:hover { color: var(--text); }
+    .m-title { font-family: var(--ft); font-size: 1.45rem; margin-bottom: .38rem; }
+    .m-sub   { color: var(--muted); font-size: .87rem; margin-bottom: 1.7rem; }
+
+    /* ══════════════════════════════════════════
+       Toast notification
+    ══════════════════════════════════════════ */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--card); border: 1px solid rgba(0,212,255,.3);
+      color: var(--text); font-size: .88rem;
+      padding: .9rem 1.4rem; border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.4);
+      z-index: 3000; transform: translateY(20px); opacity: 0;
+      transition: transform .35s ease, opacity .35s ease;
+      max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ══════════════════════════════════════════
+       Responsive
+    ══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .nav-l  { display: none; }
+      .ham    { display: flex; }
+      .ap-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .ap-photo { order: -1; }
+      .ct-grid  { grid-template-columns: 1fr; gap: 3rem; }
+      .f2       { grid-template-columns: 1fr; }
+      footer    { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      section   { padding: 4rem 1.25rem; }
+      .av-wrap  { width: 200px; height: 200px; }
+      .sk-grid  { grid-template-columns: 1fr; }
+      .h-name   { font-size: clamp(2.6rem,11vw,5rem); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Curseur -->
+<div id="cd"></div>
+<div id="cr"></div>
+
+<!-- ══════════════════════════════════════════
+     Navigation
+══════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="logo">CT<span>.</span></div>
+  <ul class="nav-l">
+    <li><a href="#apropos">À propos</a></li>
+    <li><a href="#competences">Compétences</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#experiences">Parcours</a></li>
+    <li><a href="#projets">Projets</a></li>
+    <li><a href="#contact" class="nav-cta">Me contacter</a></li>
+  </ul>
+  <button class="ham" id="ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob" id="mob">
+  <a href="#apropos"     onclick="closeMob()">À propos</a>
+  <a href="#competences" onclick="closeMob()">Compétences</a>
+  <a href="#services"    onclick="closeMob()">Services</a>
+  <a href="#experiences" onclick="closeMob()">Parcours</a>
+  <a href="#projets"     onclick="closeMob()">Projets</a>
+  <a href="#contact"     onclick="closeMob()">Me contacter</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     Hero
+══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="h-bg"></div>
+  <div class="h-grid"></div>
+  <div class="h-wrap">
+    <div class="h-badge">Disponible pour missions freelance</div>
+    <h1 class="h-name">Charlie<span class="acc"> Touchard</span></h1>
+    <p class="h-job">Ingénieur Management &amp; Industrie 4.0</p>
+    <p class="h-line">
+      Je simplifie vos processus. J'automatise le reste.
+    </p>
+    <div class="h-btns">
+      <a href="#contact"  class="btn btn-p">Me contacter</a>
+      <a href="#services" class="btn btn-o">Voir mes services</a>
+    </div>
+  </div>
+  <div class="h-scroll">
+    <span>Scroll</span>
+    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+      <path d="M7 1v18M1 13l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     À propos
+══════════════════════════════════════════ -->
+<section id="apropos">
+  <div class="wrap">
+    <div class="ap-grid">
+      <div class="ap-photo rv">
+        <div class="av-wrap">
+          <!-- Photo réelle — fichier photo.jpg dans le même dossier -->
+          <img class="av-img" src="photo.jpg" alt="Charlie Touchard" />
+          <div class="av-ring"></div>
+        </div>
+      </div>
+      <div class="ap-txt">
+        <p class="lbl rv">À propos</p>
+        <h2 class="h2 rv d1">Ingénieur, chef de projet<br><em>et freelance.</em></h2>
+        <p class="rv d2">
+          Diplômé de l'<strong>ICAM Vannes</strong> en Management &amp; Industrie 4.0.
+          3 ans d'alternance chez <strong>Eviosys/Sonoco</strong> — entre chantiers Lean,
+          développement d'outils Python et management d'équipe terrain.
+        </p>
+        <p class="rv d2">
+          Un semestre au <strong>Politecnico di Milano</strong>, une vraie appétence pour
+          l'automatisation et les systèmes connectés. Aujourd'hui, je mets ces compétences
+          au service des <strong>PME qui veulent gagner en performance</strong> sans se compliquer la vie.
+        </p>
+        <div class="stats">
+          <div class="sc rv d1"><div class="sc-n">3</div><div class="sc-l">Ans d'expérience</div></div>
+          <div class="sc rv d2"><div class="sc-n">1</div><div class="sc-l">Semestre à Milan</div></div>
+          <div class="sc rv d3"><div class="sc-n">12</div><div class="sc-l">Personnes managées</div></div>
+          <div class="sc rv d4"><div class="sc-n">2</div><div class="sc-l">Projets livrés</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Compétences
+══════════════════════════════════════════ -->
+<section id="competences">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Expertise</p>
+      <h2 class="h2 rv d1">Mes compétences</h2>
+      <p class="sub rv d2">Un profil hybride mêlant rigueur industrielle et maîtrise des outils numériques modernes.</p>
+    </div>
+    <div class="sk-grid">
+      <div class="sk-card rv d1">
+        <div class="sk-ico">⚙️</div>
+        <div class="sk-name">Amélioration continue / Lean</div>
+        <div class="sk-desc">VSM, 5S, Kaizen, PDCA — réduction des gaspillages et optimisation des flux industriels.</div>
+      </div>
+      <div class="sk-card rv d2">
+        <div class="sk-ico">📊</div>
+        <div class="sk-name">Gestion de projet</div>
+        <div class="sk-desc">Pilotage transverse, planification, gestion des parties prenantes, reporting KPI.</div>
+      </div>
+      <div class="sk-card rv d3">
+        <div class="sk-ico">💻</div>
+        <div class="sk-name">Python / Flask / Web</div>
+        <div class="sk-desc">Applications industrielles, dashboards temps réel, interfaces MES et sites sur mesure.</div>
+      </div>
+      <div class="sk-card rv d4">
+        <div class="sk-ico">🏭</div>
+        <div class="sk-name">Industrie 4.0 &amp; IoT</div>
+        <div class="sk-desc">Capteurs connectés, collecte de données machines, digitalisation des ateliers.</div>
+      </div>
+      <div class="sk-card rv d1">
+        <div class="sk-ico">🤖</div>
+        <div class="sk-name">Automatisation IA</div>
+        <div class="sk-desc">Agents IA, n8n, automatisation de workflows, intégration API et LLM pour PME.</div>
+      </div>
+      <div class="sk-card rv d2">
+        <div class="sk-ico">👥</div>
+        <div class="sk-name">Management d'équipe</div>
+        <div class="sk-desc">Animation d'équipes opérationnelles, leadership, engagement terrain.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Services
+══════════════════════════════════════════ -->
+<section id="services">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Offres</p>
+      <h2 class="h2 rv d1">Mes services</h2>
+      <p class="sub rv d2">Des offres claires, à impact rapide, pour les PME qui veulent passer à la vitesse supérieure.</p>
+    </div>
+    <div class="sv-grid">
+
+      <!-- ── Service 1 : Site vitrine ── -->
+      <div class="sv-card rv d1">
+        <div class="sv-ico">🌐</div>
+        <div class="sv-title">Site vitrine PME</div>
+        <div class="sv-desc">Un site professionnel, rapide et optimisé SEO pour donner une présence en ligne forte à votre entreprise.</div>
+        <ul class="sv-feat">
+          <li>Design sur-mesure responsive</li>
+          <li>Optimisation SEO &amp; performance</li>
+          <li>Formulaire de contact intégré</li>
+          <li>Livraison sous 2 semaines</li>
+        </ul>
+        <div class="sv-price">500 € <span>TTC</span></div>
+        <!--
+          ══ STRIPE — Site vitrine ══════════════════════════════
+          1. Créez un compte gratuit sur stripe.com
+          2. Dashboard → Produits → Créer "Site vitrine" à 500 €
+          3. Cliquez sur le produit → "Créer un lien de paiement"
+          4. Copiez l'URL (https://buy.stripe.com/XXXXXXXX)
+          5. Remplacez le href="#contact" par cette URL ci-dessous
+          ═════════════════════════════════════════════════════ -->
+        <a href="#contact" class="btn btn-o" onclick="stripeRedirect(event,'site-vitrine')">
+          Acheter — 500 €
+        </a>
+      </div>
+
+      <!-- ── Service 2 : Automatisation IA ── -->
+      <div class="sv-card hot rv d2">
+        <div class="sv-ico">🤖</div>
+        <div class="sv-title">Automatisation IA pour PME</div>
+        <div class="sv-desc">Identifiez et automatisez vos tâches répétitives grâce à l'IA — gagnez des heures chaque semaine.</div>
+        <ul class="sv-feat">
+          <li>Audit des processus automatisables</li>
+          <li>Mise en place d'agents IA</li>
+          <li>Intégration dans vos outils existants</li>
+          <li>Formation de votre équipe</li>
+        </ul>
+        <div class="sv-price">1 200 € <span>TTC</span></div>
+        <!--
+          ══ STRIPE — Automatisation IA ════════════════════════
+          Même procédure : créez le produit à 1200 €, générez le
+          lien de paiement, remplacez le href="#contact" ci-dessous.
+          ═════════════════════════════════════════════════════ -->
+        <a href="#contact" class="btn btn-p" onclick="stripeRedirect(event,'auto-ia')">
+          Acheter — 1 200 €
+        </a>
+      </div>
+
+      <!-- ── Service 3 : Consulting ── -->
+      <div class="sv-card rv d3">
+        <div class="sv-ico">📋</div>
+        <div class="sv-title">Consulting process / audit</div>
+        <div class="sv-desc">Un regard expert sur vos processus pour identifier les leviers de performance cachés.</div>
+        <ul class="sv-feat">
+          <li>Audit terrain complet</li>
+          <li>Cartographie des flux (VSM)</li>
+          <li>Plan d'actions priorisé</li>
+          <li>Accompagnement à la mise en œuvre</li>
+        </ul>
+        <div class="sv-price">Sur <span>devis</span></div>
+        <button class="btn btn-o" onclick="openModal()">Demander un devis</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Expériences
+══════════════════════════════════════════ -->
+<section id="experiences">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Parcours</p>
+      <h2 class="h2 rv d1">Expériences &amp; formation</h2>
+    </div>
+    <div class="tl">
+
+      <div class="tl-i rv">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2021 — 2024 · 3 ans</div>
+        <div class="tl-role">Ingénieur Amélioration Continue &amp; Industrie 4.0</div>
+        <div class="tl-co">Eviosys / Sonoco — Alternance</div>
+        <div class="tl-desc">Pilotage de chantiers Lean (5S, VSM, Kaizen) sur lignes de production. Développement d'un MES interne Python/Flask pour le suivi temps réel. Management d'une équipe de 12 personnes lors d'un projet de digitalisation.</div>
+        <div class="tl-tags">
+          <span class="tag">Lean</span><span class="tag">Python/Flask</span>
+          <span class="tag">MES</span><span class="tag">Management</span><span class="tag">IoT</span>
+        </div>
+      </div>
+
+      <div class="tl-i rv d1">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2023 · Semestre international</div>
+        <div class="tl-role">Semestre d'échange académique</div>
+        <div class="tl-co">Politecnico di Milano — Milan, Italie</div>
+        <div class="tl-desc">Semestre en anglais spécialisé en Management de l'Innovation et Industrie 4.0. Projets interdisciplinaires avec des étudiants internationaux.</div>
+        <div class="tl-tags">
+          <span class="tag">Innovation Management</span><span class="tag">Industrie 4.0</span><span class="tag">International</span>
+        </div>
+      </div>
+
+      <div class="tl-i rv d2">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2021 — 2024</div>
+        <div class="tl-role">Diplôme d'ingénieur — Management &amp; Industrie 4.0</div>
+        <div class="tl-co">ICAM Vannes</div>
+        <div class="tl-desc">Formation généraliste à dominante management industriel, systèmes de production, gestion de projet et transformation numérique.</div>
+        <div class="tl-tags">
+          <span class="tag">Diplôme d'ingénieur</span><span class="tag">Lean</span><span class="tag">Gestion de projet</span>
+        </div>
+      </div>
+
+      <div class="tl-i rv d3">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2022 — 2023</div>
+        <div class="tl-role">Président du Bureau Des Étudiants</div>
+        <div class="tl-co">BDE ICAM Vannes</div>
+        <div class="tl-desc">Animation de la vie étudiante, gestion du budget associatif, coordination d'une équipe de 15 bénévoles, organisation d'événements (300+ participants).</div>
+        <div class="tl-tags">
+          <span class="tag">Leadership</span><span class="tag">Gestion d'équipe</span><span class="tag">Événementiel</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Projets
+══════════════════════════════════════════ -->
+<section id="projets">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Réalisations</p>
+      <h2 class="h2 rv d1">Projets réels</h2>
+      <p class="sub rv d2">Des projets livrés, en production, que vous pouvez visiter maintenant.</p>
+    </div>
+    <div class="pj-grid">
+
+      <div class="pj-card rv d1">
+        <div class="pj-thumb">🏠</div>
+        <div class="pj-body">
+          <div class="pj-title">Laborderie Couverture</div>
+          <div class="pj-desc">Site vitrine pour une entreprise artisanale de couverture en Bretagne. Présentation des services, galerie de réalisations et formulaire de contact. Déployé sur Vercel.</div>
+          <div class="pj-tags">
+            <span class="tag">HTML/CSS</span><span class="tag">JavaScript</span>
+            <span class="tag">SEO</span><span class="tag">Vercel</span>
+          </div>
+          <a href="https://laborderie-couverture.vercel.app" target="_blank" rel="noopener" class="btn btn-o">Voir le site →</a>
+        </div>
+      </div>
+
+      <div class="pj-card rv d2">
+        <div class="pj-thumb">⚡</div>
+        <div class="pj-body">
+          <div class="pj-title">FreelanceOS</div>
+          <div class="pj-desc">Application web de gestion pour freelances — tableau de bord, suivi de projets et de clients. Interface moderne, authentification sécurisée. Déployé sur Vercel.</div>
+          <div class="pj-tags">
+            <span class="tag">Web App</span><span class="tag">Dashboard</span>
+            <span class="tag">Auth</span><span class="tag">Vercel</span>
+          </div>
+          <a href="https://freelanceos-eta.vercel.app/login" target="_blank" rel="noopener" class="btn btn-o">Voir l'app →</a>
+        </div>
+      </div>
+
+      <div class="pj-card rv d3">
+        <div class="pj-thumb">🏭</div>
+        <div class="pj-body">
+          <div class="pj-title">MES Interne — Eviosys</div>
+          <div class="pj-desc">Application Python/Flask de suivi temps réel de la production industrielle. Dashboard KPI, alertes automatiques et historique de données machines. Projet confidentiel.</div>
+          <div class="pj-tags">
+            <span class="tag">Python</span><span class="tag">Flask</span>
+            <span class="tag">PostgreSQL</span><span class="tag">IoT</span>
+          </div>
+          <a href="#contact" class="btn btn-o">Me contacter →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Témoignages
+══════════════════════════════════════════ -->
+<section id="temoignages">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Témoignages</p>
+      <h2 class="h2 rv d1">Ce qu'ils disent</h2>
+    </div>
+    <div class="te-grid">
+      <div class="te-card rv d1">
+        <div class="te-q">"</div>
+        <p class="te-txt">Charlie a su identifier rapidement les gaspillages dans notre ligne de production et proposer des solutions pragmatiques. En 3 mois, nous avons réduit nos temps de cycle de 18 %.</p>
+        <div class="te-auth">
+          <div class="av-small">JM</div>
+          <div><div class="auth-n">Jean-Marc L.</div><div class="auth-r">Directeur de production, Eviosys</div></div>
+        </div>
+      </div>
+      <div class="te-card rv d2">
+        <div class="te-q">"</div>
+        <p class="te-txt">L'application MES est simple à utiliser, fiable, et livrée dans les délais et le budget. Exactement ce dont nous avions besoin pour piloter notre atelier.</p>
+        <div class="te-auth">
+          <div class="av-small">SB</div>
+          <div><div class="auth-n">Sophie B.</div><div class="auth-r">Responsable informatique industrielle</div></div>
+        </div>
+      </div>
+      <div class="te-card rv d3">
+        <div class="te-q">"</div>
+        <p class="te-txt">Très bon accompagnement. Charlie a pris le temps de comprendre notre métier avant de proposer une solution. Résultat concret et mesurable dès les premières semaines.</p>
+        <div class="te-auth">
+          <div class="av-small">PA</div>
+          <div><div class="auth-n">Pierre A.</div><div class="auth-r">Gérant, PME logistique</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Contact
+══════════════════════════════════════════ -->
+<section id="contact">
+  <div class="wrap">
+    <div class="ct-grid">
+
+      <div class="ct-info">
+        <p class="lbl rv">Contact</p>
+        <h2 class="h2 rv d1">Travaillons ensemble</h2>
+        <p class="rv d2">Vous avez un projet ou une question ? Je réponds généralement sous 24 h.</p>
+        <div class="ct-items rv d3">
+          <div class="ct-row"><div class="ct-ico">📧</div><a href="mailto:charlie.touchard@2026.icam.fr">charlie.touchard@2026.icam.fr</a></div>
+          <div class="ct-row"><div class="ct-ico">📱</div><a href="tel:+33630473171">06 30 47 31 71</a></div>
+          <div class="ct-row"><div class="ct-ico">📍</div><span>Vannes / Rennes — Bretagne</span></div>
+          <div class="ct-row"><div class="ct-ico">⏱️</div><span>Disponible pour missions freelance</span></div>
+        </div>
+        <div class="socials rv d4">
+          <a href="https://www.linkedin.com/in/charlie-touchard-939028242/" target="_blank" rel="noopener" class="soc-a" title="LinkedIn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com/Toucharli3" target="_blank" rel="noopener" class="soc-a" title="GitHub">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!--
+        ══ FORMULAIRE — FormSubmit.co ═══════════════════════════════
+        Service gratuit, sans compte.
+        Première soumission → email de confirmation envoyé à charlie.touchard@2026.icam.fr
+        → cliquez "Confirm" dans cet email → c'est activé définitivement.
+        ════════════════════════════════════════════════════════════ -->
+      <div class="ct-form rv d2">
+        <form id="cForm"
+              action="https://formsubmit.co/charlie.touchard@2026.icam.fr"
+              method="POST">
+
+          <!-- Configuration FormSubmit -->
+          <input type="hidden" name="_subject"   value="📬 Nouveau message — Portfolio Charlie Touchard">
+          <input type="hidden" name="_captcha"   value="false">
+          <input type="hidden" name="_template"  value="box">
+          <input type="hidden" name="_next"      value=""><!-- rempli en JS -->
+
+          <div class="f2">
+            <div class="fg">
+              <label for="fn">Prénom</label>
+              <input type="text" id="fn" name="prenom" placeholder="Jean" required />
+            </div>
+            <div class="fg">
+              <label for="ln">Nom</label>
+              <input type="text" id="ln" name="nom" placeholder="Dupont" required />
+            </div>
+          </div>
+          <div class="fg">
+            <label for="em">Email</label>
+            <input type="email" id="em" name="email" placeholder="jean@entreprise.fr" required />
+          </div>
+          <div class="fg">
+            <label for="bud">Budget estimé</label>
+            <select id="bud" name="budget">
+              <option value="">— Sélectionnez —</option>
+              <option>Moins de 500 €</option>
+              <option>500 € – 1 200 €</option>
+              <option>1 200 € – 3 000 €</option>
+              <option>3 000 € – 5 000 €</option>
+              <option>Plus de 5 000 €</option>
+              <option>À définir ensemble</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label for="msg">Message</label>
+            <textarea id="msg" name="message" placeholder="Décrivez votre projet ou votre besoin..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;">
+            Envoyer le message →
+          </button>
+        </form>
+        <div class="f-ok" id="fOk">✅ Message envoyé ! Je vous réponds sous 24 h.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     Footer
+══════════════════════════════════════════ -->
+<footer>
+  <div class="ft-logo">CT<span>.</span></div>
+  <p class="ft-copy">© 2026 Charlie Touchard — Tous droits réservés</p>
+  <div class="ft-links">
+    <a href="#">Mentions légales</a>
+    <a href="#">Confidentialité</a>
+    <a href="https://www.linkedin.com/in/charlie-touchard-939028242/" target="_blank">LinkedIn</a>
+    <a href="https://github.com/Toucharli3" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     Modal devis
+══════════════════════════════════════════ -->
+<div class="overlay" id="qModal">
+  <div class="modal">
+    <button class="m-x" onclick="closeModal()">×</button>
+    <h3 class="m-title">Demande de devis</h3>
+    <p class="m-sub">Décrivez votre besoin — je vous réponds avec une estimation sous 48 h.</p>
+    <!--
+      FormSubmit.co — même endpoint, subject différent
+    -->
+    <form action="https://formsubmit.co/charlie.touchard@2026.icam.fr" method="POST"
+          onsubmit="closeModal()">
+      <input type="hidden" name="_subject"  value="💼 Demande de devis — Portfolio">
+      <input type="hidden" name="_captcha"  value="false">
+      <input type="hidden" name="_template" value="box">
+      <div class="fg">
+        <label>Nom complet</label>
+        <input type="text" name="nom" placeholder="Jean Dupont" required />
+      </div>
+      <div class="fg">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="jean@entreprise.fr" required />
+      </div>
+      <div class="fg">
+        <label>Entreprise</label>
+        <input type="text" name="entreprise" placeholder="PME Industrie Sàrl" />
+      </div>
+      <div class="fg">
+        <label>Description du projet</label>
+        <textarea name="description" placeholder="Contexte, objectifs, contraintes..." required style="min-height:95px;"></textarea>
+      </div>
+      <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;">Envoyer →</button>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     JavaScript
+══════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────
+   STRIPE — Payment Links
+   ─────────────────────────────────────────────
+   Quand vous avez vos liens Stripe Payment :
+   1. Allez sur stripe.com → Produits → votre produit → "Créer un lien de paiement"
+   2. Remplacez les '#' ci-dessous par vos URLs (https://buy.stripe.com/...)
+   ───────────────────────────────────────────── */
+const STRIPE_LINKS = {
+  'site-vitrine': '#',   // ← Remplacez par https://buy.stripe.com/XXXXXXXX
+  'auto-ia':      '#',   // ← Remplacez par https://buy.stripe.com/YYYYYYYY
+};
+
+function stripeRedirect(e, key) {
+  const url = STRIPE_LINKS[key];
+  if (!url || url === '#') {
+    e.preventDefault();
+    toast('💳 Paiement en cours de configuration — contactez-moi directement !');
+    setTimeout(() => { document.getElementById('contact').scrollIntoView({ behavior:'smooth' }); }, 800);
+  }
+  /* Si url est valide, le lien <a> redirige normalement */
+}
+
+/* ─── Toast ─── */
+function toast(msg, duration = 3500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+/* ─── Curseur ─── */
+const cd = document.getElementById('cd');
+const cr = document.getElementById('cr');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cd.style.left = mx + 'px'; cd.style.top = my + 'px';
+});
+(function loop() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  cr.style.left = rx + 'px'; cr.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+document.addEventListener('mouseleave', () => { cd.style.opacity = 0; cr.style.opacity = 0; });
+document.addEventListener('mouseenter', () => { cd.style.opacity = 1; cr.style.opacity = 1; });
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cd.style.transform = 'translate(-50%,-50%) scale(2)'; cr.style.width = cr.style.height = '54px'; });
+  el.addEventListener('mouseleave', () => { cd.style.transform = 'translate(-50%,-50%) scale(1)'; cr.style.width = cr.style.height = '38px'; });
+});
+
+/* ─── Nav scroll ─── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('on', scrollY > 50), { passive: true });
+
+/* ─── Smooth scroll ─── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return; e.preventDefault();
+    window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - nav.offsetHeight, behavior: 'smooth' });
+  });
+});
+
+/* ─── Mobile menu ─── */
+document.getElementById('ham').addEventListener('click', () => document.getElementById('mob').classList.toggle('open'));
+function closeMob() { document.getElementById('mob').classList.remove('open'); }
+
+/* ─── Scroll Reveal ─── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+/* ─── Hero Parallax ─── */
+const hBg = document.querySelector('.h-bg');
+const hGr = document.querySelector('.h-grid');
+window.addEventListener('scroll', () => {
+  const s = scrollY;
+  if (hBg) hBg.style.transform = `translateY(${s * .27}px)`;
+  if (hGr) hGr.style.transform = `translateY(${s * .13}px)`;
+}, { passive: true });
+
+/* ─── Modal ─── */
+function openModal()  { document.getElementById('qModal').classList.add('open');    document.body.style.overflow = 'hidden'; }
+function closeModal() { document.getElementById('qModal').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('qModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+/* ─── FormSubmit redirect vers la même page ─── */
+(function() {
+  const nextInput = document.querySelector('input[name="_next"]');
+  if (nextInput) nextInput.value = location.href + '?sent=1';
+  if (location.search.includes('sent=1')) {
+    document.getElementById('cForm').style.display = 'none';
+    document.getElementById('fOk').style.display   = 'block';
+    history.replaceState({}, '', location.pathname);
+  }
+})();
+</script>
+</body>
+</html>
