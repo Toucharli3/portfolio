@@ -972,6 +972,7 @@
       <input type="hidden" name="_subject"  value="💼 Demande de devis — Portfolio">
       <input type="hidden" name="_captcha"  value="false">
       <input type="hidden" name="_template" value="box">
+      <input type="hidden" name="_next"     id="qNext" value="">
       <div class="fg">
         <label>Nom complet</label>
         <input type="text" name="nom" placeholder="Jean Dupont" required />
@@ -1089,11 +1090,17 @@ document.getElementById('qModal').addEventListener('click', e => { if (e.target 
 
 /* ─── FormSubmit redirect vers la même page ─── */
 (function() {
-  const nextInput = document.querySelector('input[name="_next"]');
-  if (nextInput) nextInput.value = location.href + '?sent=1';
+  const nextInput = document.querySelector('#cForm input[name="_next"]');
+  if (nextInput) nextInput.value = location.origin + location.pathname + '?sent=1';
+  const qNext = document.getElementById('qNext');
+  if (qNext) qNext.value = location.origin + location.pathname + '?devis=1';
   if (location.search.includes('sent=1')) {
     document.getElementById('cForm').style.display = 'none';
     document.getElementById('fOk').style.display   = 'block';
+    history.replaceState({}, '', location.pathname);
+  }
+  if (location.search.includes('devis=1')) {
+    toast('✅ Demande de devis envoyée ! Je vous réponds sous 48 h.');
     history.replaceState({}, '', location.pathname);
   }
 })();
