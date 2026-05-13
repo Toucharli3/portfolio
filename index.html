@@ -247,6 +247,32 @@
     .sc-l { font-size: .76rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
 
     /* ══════════════════════════════════════════
+       Méthode / Process
+    ══════════════════════════════════════════ */
+    #methode { }
+    .proc-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 1.5rem; position: relative; }
+    .proc-grid::before {
+      content: '';
+      position: absolute; top: 2.5rem; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .2;
+    }
+    .proc-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2rem 1.5rem;
+      position: relative; transition: border-color var(--ease), transform var(--ease);
+    }
+    .proc-card:hover { border-color: rgba(0,212,255,.3); transform: translateY(-3px); }
+    .proc-num {
+      font-family: var(--ft); font-size: 3rem; font-weight: 700;
+      color: rgba(0,212,255,.12); line-height: 1;
+      position: absolute; top: 1rem; right: 1.2rem;
+    }
+    .proc-ico { font-size: 1.8rem; margin-bottom: 1rem; }
+    .proc-title { font-weight: 600; font-size: 1rem; margin-bottom: .4rem; }
+    .proc-desc { font-size: .84rem; color: var(--muted); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════
        Compétences
     ══════════════════════════════════════════ */
     .sk-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(235px,1fr)); gap: 1.3rem; }
@@ -500,6 +526,7 @@
   <ul class="nav-l">
     <li><a href="#apropos">À propos</a></li>
     <li><a href="#competences">Compétences</a></li>
+    <li><a href="#methode">Méthode</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#experiences">Parcours</a></li>
     <li><a href="#projets">Projets</a></li>
@@ -512,6 +539,7 @@
 <div class="mob" id="mob">
   <a href="#apropos"     onclick="closeMob()">À propos</a>
   <a href="#competences" onclick="closeMob()">Compétences</a>
+  <a href="#methode"     onclick="closeMob()">Méthode</a>
   <a href="#services"    onclick="closeMob()">Services</a>
   <a href="#experiences" onclick="closeMob()">Parcours</a>
   <a href="#projets"     onclick="closeMob()">Projets</a>
@@ -627,6 +655,39 @@
 </section>
 
 <!-- ══════════════════════════════════════════
+     Méthode
+══════════════════════════════════════════ -->
+<section id="methode">
+  <div class="wrap">
+    <div class="shd">
+      <p class="lbl rv">Comment je travaille</p>
+      <h2 class="h2 rv d1">Ma méthode en 3 étapes</h2>
+      <p class="sub rv d2">Simple, transparente, orientée résultats.</p>
+    </div>
+    <div class="proc-grid">
+      <div class="proc-card rv d1">
+        <div class="proc-num">01</div>
+        <div class="proc-ico">🔍</div>
+        <div class="proc-title">Audit & Diagnostic</div>
+        <div class="proc-desc">On commence par comprendre votre contexte, vos contraintes et vos objectifs. Pas de solution générique — je pars du terrain.</div>
+      </div>
+      <div class="proc-card rv d2">
+        <div class="proc-num">02</div>
+        <div class="proc-ico">⚙️</div>
+        <div class="proc-title">Conception & Réalisation</div>
+        <div class="proc-desc">Je conçois et développe la solution adaptée — site, outil, workflow ou plan d'action — avec des points d'avancement réguliers.</div>
+      </div>
+      <div class="proc-card rv d3">
+        <div class="proc-num">03</div>
+        <div class="proc-ico">🚀</div>
+        <div class="proc-title">Livraison & Autonomie</div>
+        <div class="proc-desc">Mise en production, formation si besoin, documentation. Vous repartez autonome sur ce qu'on a construit ensemble.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
      Services
 ══════════════════════════════════════════ -->
 <section id="services">
@@ -649,7 +710,7 @@
           <li>Formulaire de contact intégré</li>
           <li>Livraison sous 2 semaines</li>
         </ul>
-        <div class="sv-price">350 € <span>TTC</span></div>
+        <div class="sv-price">800 € <span>TTC</span></div>
         <!--
           ══ STRIPE — Site vitrine ══════════════════════════════
           1. Créez un compte gratuit sur stripe.com
@@ -697,6 +758,7 @@
           <li>Accompagnement à la mise en œuvre</li>
         </ul>
         <div class="sv-price">Sur <span>devis</span></div>
+        <div style="font-size:.78rem;color:var(--muted);">TJM indicatif : 400 – 500 € / jour</div>
         <button class="btn btn-o" onclick="openModal()">Demander un devis</button>
       </div>
 
@@ -1073,6 +1135,36 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+/* ─── Compteurs animés (stats) ─── */
+function animateCounter(el, target, suffix = '') {
+  const isSymbol = isNaN(target);
+  if (isSymbol) { el.textContent = target; return; }
+  let start = 0, duration = 1400, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    const pct = Math.min((ts - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - pct, 3);
+    el.textContent = Math.floor(ease * target) + suffix;
+    if (pct < 1) requestAnimationFrame(step);
+    else el.textContent = target + suffix;
+  }
+  requestAnimationFrame(step);
+}
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const raw = e.target.dataset.count;
+    const target = isNaN(raw) ? raw : parseInt(raw);
+    animateCounter(e.target, target);
+    counterObs.unobserve(e.target);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.sc-n').forEach(el => {
+  el.dataset.count = el.textContent.trim();
+  el.textContent = '0';
+  counterObs.observe(el);
+});
 
 /* ─── Hero Parallax ─── */
 const hBg = document.querySelector('.h-bg');
