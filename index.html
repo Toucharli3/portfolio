@@ -372,10 +372,20 @@
     }
     .pj-card:hover .pj-thumb::after { opacity: 1; }
     .pj-body { padding: 1.5rem; }
+    .pj-thumb .pj-emoji { position: relative; z-index: 1; filter: drop-shadow(0 4px 14px rgba(0,0,0,.35)); }
+    .pj-meta  { font-size: .7rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); margin-bottom: .5rem; opacity: .9; }
     .pj-title { font-family: var(--ft); font-size: 1.1rem; font-weight: 600; margin-bottom: .42rem; }
     .pj-desc  { font-size: .84rem; color: var(--muted); margin-bottom: .85rem; line-height: 1.65; }
     .pj-tags  { display: flex; flex-wrap: wrap; gap: .36rem; margin-bottom: 1.1rem; }
     .pj-card .btn { font-size: .8rem; padding: .55rem 1.3rem; }
+    /* Badge "Nouveau" sur les réalisations récentes */
+    .pj-card { position: relative; }
+    .pj-new {
+      position: absolute; top: .9rem; left: .9rem; z-index: 2;
+      background: var(--accent); color: #000;
+      font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+      padding: .18rem .55rem; border-radius: 99px;
+    }
 
     /* ══════════════════════════════════════════
        Témoignages
@@ -602,7 +612,7 @@
           <div class="sc rv d1"><div class="sc-n">3</div><div class="sc-l">Ans d'expérience</div></div>
           <div class="sc rv d2"><div class="sc-n">1</div><div class="sc-l">Semestre à Milan</div></div>
           <div class="sc rv d3"><div class="sc-n">12</div><div class="sc-l">Personnes managées</div></div>
-          <div class="sc rv d4"><div class="sc-n">2</div><div class="sc-l">Projets livrés</div></div>
+          <div class="sc rv d4"><div class="sc-n">7</div><div class="sc-l">Sites livrés</div></div>
         </div>
       </div>
     </div>
@@ -829,15 +839,90 @@
     <div class="shd">
       <p class="lbl rv">Réalisations</p>
       <h2 class="h2 rv d1">Projets réels</h2>
-      <p class="sub rv d2">Des projets livrés, en production, que vous pouvez visiter maintenant.</p>
+      <p class="sub rv d2">7 sites en production — cliquables, en ligne, que vous pouvez visiter maintenant.</p>
     </div>
     <div class="pj-grid">
 
+      <!-- Cadence — flagship récent -->
       <div class="pj-card rv d1">
-        <div class="pj-thumb">⚓</div>
+        <span class="pj-new">Nouveau</span>
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(255,94,58,.20), transparent 60%), linear-gradient(135deg,#150f0d,#1b1413);">
+          <span class="pj-emoji">🚴</span>
+        </div>
         <div class="pj-body">
+          <div class="pj-meta">Studio cycling · Lyon</div>
+          <div class="pj-title">Cadence</div>
+          <div class="pj-desc">Landing page pour un studio de cycling indoor premium à la Croix-Rousse. Direction visuelle intense, animations GSAP au scroll et parcours immersif du hero à la réservation.</div>
+          <div class="pj-tags">
+            <span class="tag">Next.js</span><span class="tag">GSAP</span>
+            <span class="tag">Tailwind</span><span class="tag">Motion design</span>
+          </div>
+          <a href="https://toucharli3.github.io/Test/" target="_blank" rel="noopener" class="btn btn-o">Voir le site →</a>
+        </div>
+      </div>
+
+      <!-- Very Pretty -->
+      <div class="pj-card rv d2">
+        <span class="pj-new">Nouveau</span>
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(255,120,180,.20), transparent 60%), linear-gradient(135deg,#161014,#1b141a);">
+          <span class="pj-emoji">👗</span>
+        </div>
+        <div class="pj-body">
+          <div class="pj-meta">Prêt-à-porter · Quimper</div>
+          <div class="pj-title">Very Pretty</div>
+          <div class="pj-desc">Site vitrine one-page pour une boutique de prêt-à-porter féminin. Palette pastel, typographie chic, SEO local (schema.org ClothingStore) et images optimisées.</div>
+          <div class="pj-tags">
+            <span class="tag">Next.js</span><span class="tag">Tailwind</span>
+            <span class="tag">SEO local</span><span class="tag">Responsive</span>
+          </div>
+          <a href="https://toucharli3.github.io/VeryPretty/" target="_blank" rel="noopener" class="btn btn-o">Voir le site →</a>
+        </div>
+      </div>
+
+      <!-- L'Atelier Nacré -->
+      <div class="pj-card rv d3">
+        <span class="pj-new">Nouveau</span>
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(226,183,209,.22), transparent 60%), linear-gradient(135deg,#151016,#1a151b);">
+          <span class="pj-emoji">💅</span>
+        </div>
+        <div class="pj-body">
+          <div class="pj-meta">Nail artist · Vitrine</div>
+          <div class="pj-title">L'Atelier Nacré</div>
+          <div class="pj-desc">Site vitrine élégant pour une prothésiste ongulaire : prestations & tarifs, galerie filtrable, avis, FAQ et réservation. Zéro dépendance, animations douces, accessible.</div>
+          <div class="pj-tags">
+            <span class="tag">HTML/CSS</span><span class="tag">JavaScript</span>
+            <span class="tag">SEO</span><span class="tag">GitHub Pages</span>
+          </div>
+          <a href="https://toucharli3.github.io/NailArtist/" target="_blank" rel="noopener" class="btn btn-o">Voir le site →</a>
+        </div>
+      </div>
+
+      <!-- FreelanceOS -->
+      <div class="pj-card rv d4">
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, var(--glow), transparent 60%), linear-gradient(135deg,#0d1418,#121a1e);">
+          <span class="pj-emoji">⚡</span>
+        </div>
+        <div class="pj-body">
+          <div class="pj-meta">SaaS · Gestion freelance</div>
+          <div class="pj-title">FreelanceOS</div>
+          <div class="pj-desc">Application web de gestion pour freelances — tableau de bord, suivi de projets et de clients. Interface moderne, authentification sécurisée.</div>
+          <div class="pj-tags">
+            <span class="tag">Next.js</span><span class="tag">TypeScript</span>
+            <span class="tag">Supabase</span><span class="tag">SaaS</span>
+          </div>
+          <a href="https://freelanceos-eta.vercel.app/login" target="_blank" rel="noopener" class="btn btn-o">Voir l'app →</a>
+        </div>
+      </div>
+
+      <!-- L'Ancre Dorée -->
+      <div class="pj-card rv d1">
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(212,175,90,.20), transparent 60%), linear-gradient(135deg,#14110a,#191510);">
+          <span class="pj-emoji">⚓</span>
+        </div>
+        <div class="pj-body">
+          <div class="pj-meta">Restaurant · Fouesnant</div>
           <div class="pj-title">L'Ancre Dorée</div>
-          <div class="pj-desc">Site vitrine pour un restaurant gastronomique breton à Fouesnant, spécialisé cuisine de la mer et produits locaux. Design élégant et épuré, mise en valeur des plats et du cadre côtier.</div>
+          <div class="pj-desc">Site vitrine pour un restaurant gastronomique breton, spécialisé cuisine de la mer et produits locaux. Design élégant et épuré, mise en valeur des plats et du cadre côtier.</div>
           <div class="pj-tags">
             <span class="tag">HTML/CSS</span><span class="tag">JavaScript</span>
             <span class="tag">Design</span><span class="tag">GitHub Pages</span>
@@ -846,11 +931,15 @@
         </div>
       </div>
 
+      <!-- Le Fil de Bretagne -->
       <div class="pj-card rv d2">
-        <div class="pj-thumb">🧵</div>
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(60,150,185,.20), transparent 60%), linear-gradient(135deg,#0c1215,#11181c);">
+          <span class="pj-emoji">🧵</span>
+        </div>
         <div class="pj-body">
+          <div class="pj-meta">Mode · Concarneau</div>
           <div class="pj-title">Le Fil de Bretagne</div>
-          <div class="pj-desc">Site vitrine pour une boutique de mode haut de gamme à Concarneau. Prêt-à-porter local et éco-responsable. Palette naturelle, esthétique bretonne authentique.</div>
+          <div class="pj-desc">Site vitrine pour une boutique de mode haut de gamme. Prêt-à-porter local et éco-responsable. Palette naturelle, esthétique bretonne authentique.</div>
           <div class="pj-tags">
             <span class="tag">HTML/CSS</span><span class="tag">JavaScript</span>
             <span class="tag">Mode</span><span class="tag">GitHub Pages</span>
@@ -859,29 +948,20 @@
         </div>
       </div>
 
+      <!-- Laborderie Couverture -->
       <div class="pj-card rv d3">
-        <div class="pj-thumb">🏠</div>
+        <div class="pj-thumb" style="background:radial-gradient(circle at 30% 25%, rgba(150,170,190,.16), transparent 60%), linear-gradient(135deg,#101315,#15191c);">
+          <span class="pj-emoji">🏠</span>
+        </div>
         <div class="pj-body">
+          <div class="pj-meta">Artisan couvreur · Bretagne</div>
           <div class="pj-title">Laborderie Couverture</div>
-          <div class="pj-desc">Site vitrine pour une entreprise artisanale de couverture en Bretagne. Présentation des services, galerie de réalisations et formulaire de contact.</div>
+          <div class="pj-desc">Site vitrine pour une entreprise artisanale de couverture. Présentation des services, galerie de réalisations et formulaire de contact.</div>
           <div class="pj-tags">
             <span class="tag">HTML/CSS</span><span class="tag">JavaScript</span>
             <span class="tag">SEO</span><span class="tag">Vercel</span>
           </div>
           <a href="https://laborderie-couverture.vercel.app" target="_blank" rel="noopener" class="btn btn-o">Voir le site →</a>
-        </div>
-      </div>
-
-      <div class="pj-card rv d4">
-        <div class="pj-thumb">⚡</div>
-        <div class="pj-body">
-          <div class="pj-title">FreelanceOS</div>
-          <div class="pj-desc">Application web de gestion pour freelances — tableau de bord, suivi de projets et de clients. Interface moderne, authentification sécurisée.</div>
-          <div class="pj-tags">
-            <span class="tag">Next.js</span><span class="tag">TypeScript</span>
-            <span class="tag">Supabase</span><span class="tag">SaaS</span>
-          </div>
-          <a href="https://freelanceos-eta.vercel.app/login" target="_blank" rel="noopener" class="btn btn-o">Voir l'app →</a>
         </div>
       </div>
 
